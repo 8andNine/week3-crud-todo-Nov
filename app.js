@@ -23,7 +23,7 @@ app.get('/todos', (req, res) => {
 
 // POST New – Create
 app.post('/todos', createTodoValidator, (req, res) => {
-  const newTodo = { id: todos.length + 1, ...req.body }; // Auto-ID
+  const newTodo = { id: todos.length + 1, completed: false, ...req.body }; // Auto-ID
   todos.push(newTodo);
   res.status(201).json(newTodo); // Echo back
 });
@@ -49,6 +49,23 @@ app.delete('/todos/:id', (req, res) => {
     next(error); // Pass to error handler
   }
 });
+// Get Single
+app.get('/todos/:id', (req, res) =>{
+  const id = parseInt(req.params.id);
+  const todo = todo.find((t) => t.id === id);
+
+  if (!todo) {
+    return res.status(404).json({message: 'Todo not found'});
+  }
+
+  res.status(200).json(todo)
+})
+
+// ACTIVE 
+app.get('/todos/active', (req, res) => {
+  const active = todos.filter((t) => !t.completed);
+  res.status(200).json(active);
+})
 
 app.get('/todos/completed', (req, res) => {
   const completed = todos.filter((t) => t.completed);
